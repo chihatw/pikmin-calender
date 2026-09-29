@@ -1,3 +1,6 @@
+import { RewardSettings } from "@/components/RewardSettings";
+import type { Reward } from "@/lib/rewards";
+
 type SettingsFormProps = {
   selectedMonth: string;
   currencyName: string;
@@ -7,6 +10,8 @@ type SettingsFormProps = {
   onCurrencyNameChange: (value: string) => void;
   onCurrencyUnitChange: (value: string) => void;
   onBonusInputChange: (value: string) => void;
+  rewards: Reward[];
+  onRewardsChange: (rewards: Reward[]) => void;
 };
 
 const inputClasses =
@@ -21,6 +26,8 @@ export function SettingsForm({
   onCurrencyNameChange,
   onCurrencyUnitChange,
   onBonusInputChange,
+  rewards,
+  onRewardsChange,
 }: SettingsFormProps) {
   return (
     <form
@@ -75,6 +82,8 @@ export function SettingsForm({
           Enter comma-separated dates
         </span>
       </label>
+
+      <RewardSettings rewards={rewards} onRewardsChange={onRewardsChange} />
     </form>
   );
 }

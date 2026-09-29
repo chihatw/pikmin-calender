@@ -1,10 +1,12 @@
 import { DayCell } from '@/components/DayCell';
+import { RewardImage } from '@/components/RewardImage';
 import {
   BONUS_UNIT,
   MULTIPLIER,
   REGULAR_UNIT,
   type MonthData,
 } from '@/lib/calendar';
+import { placeRewards, type Reward } from '@/lib/rewards';
 
 type CalendarViewProps = {
   year: number;
@@ -12,6 +14,7 @@ type CalendarViewProps = {
   currencyName: string;
   currencyUnit: string;
   calendar: MonthData;
+  rewards: Reward[];
 };
 
 const weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'] as const;
@@ -28,6 +31,7 @@ export function CalendarView({
   currencyName,
   currencyUnit,
   calendar,
+  rewards,
 }: CalendarViewProps) {
   const monthName = new Intl.DateTimeFormat('en-US', {
     month: 'long',
@@ -36,6 +40,15 @@ export function CalendarView({
 
   const occupiedCellCount = calendar.leadingEmptyCells + calendar.days.length;
   const trailingEmptyCells = (7 - (occupiedCellCount % 7)) % 7;
+  const rewardPlacements = placeRewards(calendar.days, rewards);
+  const rewardByDay = new Map(
+    rewardPlacements
+      .filter((placement) => placement.day !== null)
+      .map((placement) => [placement.day, placement.reward]),
+  );
+  const trailingReward = rewardPlacements.find(
+    (placement) => placement.day === null,
+  )?.reward;
 
   return (
     <section
@@ -89,16 +102,35 @@ export function CalendarView({
           ))}
 
           {calendar.days.map((date) => (
-            <DayCell key={date.day} date={date} />
-          ))}
-
-          {Array.from({ length: trailingEmptyCells }, (_, index) => (
-            <div
-              key={`trailing-${index}`}
-              className='h-24 bg-canvas'
-              aria-hidden='true'
+            <DayCell
+              key={date.day}
+              date={date}
+              reward={rewardByDay.get(date.day)}
             />
           ))}
+
+          {Array.from({ length: trailingEmptyCells }, (_, index) => {
+            if (index === 0 && trailingReward) {
+              return (
+                <div
+                  key='trailing-reward'
+                  className='relative h-24 overflow-hidden bg-reward'
+                  role='cell'
+                  aria-label={`Reward at ${trailingReward.requiredCurrency}`}
+                >
+                  <RewardImage reward={trailingReward} />
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={`trailing-${index}`}
+                className='h-24 bg-canvas'
+                aria-hidden='true'
+              />
+            );
+          })}
         </div>
       </div>
     </section>

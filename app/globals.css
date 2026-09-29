@@ -9,6 +9,8 @@
   --color-weekday-sun: #ff6552;
   --color-date-badge: #d9d7d3;
   --color-grid-line: #a8a8a8;
+  --color-reward: #e6b8f2;
+  --color-reward-currency: #ffffff;
   --font-sans: var(--font-jost);
 }
 
@@ -17,6 +19,10 @@
   height: 4rem;
   background-color: var(--color-date-badge);
   clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+@utility reward-currency-shadow {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 80%), 0 0 4px rgb(0 0 0 / 55%);
 }
 
 * {

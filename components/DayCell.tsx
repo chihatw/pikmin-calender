@@ -1,23 +1,34 @@
+import { RewardImage } from "@/components/RewardImage";
 import type { CalendarDay } from "@/lib/calendar";
+import type { Reward } from "@/lib/rewards";
 
 type DayCellProps = {
   date: CalendarDay;
+  reward?: Reward;
 };
 
-export function DayCell({ date }: DayCellProps) {
-  const totalColor = date.isBonus ? "text-currency-bonus" : "text-currency-regular";
+export function DayCell({ date, reward }: DayCellProps) {
+  const totalColor = date.isBonus
+    ? "text-currency-bonus"
+    : "text-currency-regular";
 
   return (
     <div
-      className="relative flex h-24 items-center justify-center overflow-hidden bg-canvas"
+      className={`relative flex h-24 items-center justify-center overflow-hidden ${reward ? "bg-reward" : "bg-canvas"}`}
       role="cell"
-      aria-label={`Day ${date.day}: ${date.total}${date.isBonus ? ", bonus day" : ""}`}
+      aria-label={`Day ${date.day}: ${date.total}${date.isBonus ? ", bonus day" : ""}${reward ? `, reward at ${reward.requiredCurrency}` : ""}`}
     >
-      <span className="date-badge absolute left-0 top-0 z-0" aria-hidden="true" />
-      <span className="absolute left-2 top-0 z-10 text-2xl font-extrabold text-content">
+      {reward && <RewardImage reward={reward} />}
+      <span
+        className={`date-badge absolute left-0 top-0 z-20 ${reward ? "opacity-80" : ""}`}
+        aria-hidden="true"
+      />
+      <span className="absolute left-2 top-0 z-30 text-2xl font-extrabold text-content">
         {date.day}
       </span>
-      <span className={`z-10 mt-4 whitespace-nowrap text-4xl font-extrabold tabular-nums tracking-tight ${totalColor}`}>
+      <span
+        className={`relative z-50 mt-4 whitespace-nowrap text-4xl font-extrabold tabular-nums tracking-tight ${totalColor}`}
+      >
         {date.total}
       </span>
     </div>
