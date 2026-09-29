@@ -1,4 +1,6 @@
+import { ColorSettings } from "@/components/ColorSettings";
 import { RewardSettings } from "@/components/RewardSettings";
+import type { CalendarColors, ColorKey, ColorValue } from "@/lib/colors";
 import type { Reward } from "@/lib/rewards";
 
 type SettingsFormProps = {
@@ -10,6 +12,8 @@ type SettingsFormProps = {
   onCurrencyNameChange: (value: string) => void;
   onCurrencyUnitChange: (value: string) => void;
   onBonusInputChange: (value: string) => void;
+  colors: CalendarColors;
+  onColorChange: (key: ColorKey, value: ColorValue) => void;
   rewards: Reward[];
   onRewardsChange: (rewards: Reward[]) => void;
 };
@@ -26,6 +30,8 @@ export function SettingsForm({
   onCurrencyNameChange,
   onCurrencyUnitChange,
   onBonusInputChange,
+  colors,
+  onColorChange,
   rewards,
   onRewardsChange,
 }: SettingsFormProps) {
@@ -82,6 +88,8 @@ export function SettingsForm({
           Enter comma-separated dates
         </span>
       </label>
+
+      <ColorSettings colors={colors} onColorChange={onColorChange} />
 
       <RewardSettings rewards={rewards} onRewardsChange={onRewardsChange} />
     </form>

@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { CalendarView } from "@/components/CalendarView";
 import { SettingsForm } from "@/components/SettingsForm";
 import { buildMonth, parseBonusDays } from "@/lib/calendar";
+import {
+  DEFAULT_CALENDAR_COLORS,
+  toRgba,
+  type ColorKey,
+  type ColorValue,
+} from "@/lib/colors";
 import type { Reward } from "@/lib/rewards";
 
 const DEFAULT_CURRENCY_NAME = "Stained Glass Cookies";
@@ -35,6 +41,7 @@ export default function Home() {
   const [currencyName, setCurrencyName] = useState(DEFAULT_CURRENCY_NAME);
   const [currencyUnit, setCurrencyUnit] = useState(DEFAULT_CURRENCY_UNIT);
   const [bonusInput, setBonusInput] = useState(DEFAULT_BONUS_DAYS);
+  const [colors, setColors] = useState(DEFAULT_CALENDAR_COLORS);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [hasLoadedRewards, setHasLoadedRewards] = useState(false);
 
@@ -72,8 +79,22 @@ export default function Home() {
     return buildMonth(year, month, bonusDays);
   }, [bonusInput, month, year]);
 
+  function handleColorChange(key: ColorKey, value: ColorValue) {
+    setColors((currentColors) => ({
+      ...currentColors,
+      [key]: value,
+    }));
+  }
+
+  const colorStyles = {
+    "--color-canvas": toRgba(colors.canvas),
+    "--color-reward": toRgba(colors.reward),
+    "--color-currency-regular": toRgba(colors.currencyRegular),
+    "--color-currency-bonus": toRgba(colors.currencyBonus),
+  } as CSSProperties;
+
   return (
-    <main className="py-6">
+    <main className="py-6" style={colorStyles}>
       <SettingsForm
         selectedMonth={selectedMonth}
         currencyName={currencyName}
@@ -83,6 +104,8 @@ export default function Home() {
         onCurrencyNameChange={setCurrencyName}
         onCurrencyUnitChange={setCurrencyUnit}
         onBonusInputChange={setBonusInput}
+        colors={colors}
+        onColorChange={handleColorChange}
         rewards={rewards}
         onRewardsChange={setRewards}
       />
