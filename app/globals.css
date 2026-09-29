@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #fff2da;
+  --color-content: #5f5f5f;
+  --color-currency-regular: #087fc1;
+  --color-currency-bonus: #f76c00;
+  --color-weekday-sat: #087fc1;
+  --color-weekday-sun: #ff6552;
+  --color-date-badge: #d9d7d3;
+  --color-grid-line: #a8a8a8;
+  --font-sans: var(--font-jost);
+}
+
+@utility date-badge {
+  width: 4rem;
+  height: 4rem;
+  background-color: var(--color-date-badge);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-width: 64rem;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f5f5f5;
+  color: var(--color-content);
+  font-family: var(--font-jost), sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
