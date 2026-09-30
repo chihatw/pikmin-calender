@@ -11,7 +11,7 @@ type ColorSettingsProps = {
 
 const colorOptions: { key: ColorKey; label: string }[] = [
   { key: "canvas", label: "Canvas" },
-  { key: "reward", label: "Reward（背景）" },
+  { key: "reward", label: "Reward (Background)" },
   { key: "currencyRegular", label: "Currency regular" },
   { key: "currencyBonus", label: "Currency bonus" },
 ];
@@ -44,7 +44,7 @@ export function ColorSettings({ colors, onColorChange }: ColorSettingsProps) {
               </label>
 
               <div className="mt-3 flex items-center justify-between text-xs text-zinc-600">
-                <label htmlFor={opacityId}>透明度</label>
+                <label htmlFor={opacityId}>Opacity</label>
                 <output htmlFor={opacityId}>{value.opacity}%</output>
               </div>
               <input
@@ -61,7 +61,7 @@ export function ColorSettings({ colors, onColorChange }: ColorSettingsProps) {
                     opacity: Number(event.target.value),
                   })
                 }
-                aria-label={`${label}の透明度`}
+                aria-label={`${label} opacity`}
               />
               <p className="mt-1 text-xs font-medium uppercase tabular-nums text-zinc-500">
                 {value.hex}

@@ -22,6 +22,7 @@ export function RewardSettings({
 }: RewardSettingsProps) {
   const [requiredCurrency, setRequiredCurrency] = useState("");
   const [imageDataUrl, setImageDataUrl] = useState("");
+  const [imageFileName, setImageFileName] = useState("");
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,23 +32,27 @@ export function RewardSettings({
 
     if (!file) {
       setImageDataUrl("");
+      setImageFileName("");
       return;
     }
 
     if (file.type !== "image/png") {
       setImageDataUrl("");
-      setError("PNG imageを選択してください。");
+      setImageFileName("");
+      setError("Choose a PNG image.");
       event.target.value = "";
       return;
     }
 
+    setImageFileName(file.name);
     const reader = new FileReader();
     reader.addEventListener("load", () => {
       if (typeof reader.result === "string") setImageDataUrl(reader.result);
     });
     reader.addEventListener("error", () => {
       setImageDataUrl("");
-      setError("画像を読み込めませんでした。");
+      setImageFileName("");
+      setError("Unable to read the image.");
     });
     reader.readAsDataURL(file);
   }
@@ -56,12 +61,12 @@ export function RewardSettings({
     const parsedCurrency = Number(requiredCurrency);
 
     if (!Number.isFinite(parsedCurrency) || parsedCurrency < 0) {
-      setError("必要通貨には0以上の数値を入力してください。");
+      setError("Required currency must be a number greater than or equal to 0.");
       return;
     }
 
     if (!imageDataUrl) {
-      setError("PNG imageを選択してください。");
+      setError("Choose a PNG image.");
       return;
     }
 
@@ -75,6 +80,7 @@ export function RewardSettings({
     ]);
     setRequiredCurrency("");
     setImageDataUrl("");
+    setImageFileName("");
     setError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
@@ -85,7 +91,7 @@ export function RewardSettings({
 
       <div className="mt-2 flex items-end gap-3">
         <label className="flex flex-1 flex-col gap-2 text-sm font-semibold text-zinc-700">
-          必要通貨
+          Required currency
           <input
             className={fieldClasses}
             type="number"
@@ -97,17 +103,26 @@ export function RewardSettings({
           />
         </label>
 
-        <label className="flex flex-[2] flex-col gap-2 text-sm font-semibold text-zinc-700">
-          画像（透過PNG）
-          <input
-            ref={fileInputRef}
-            className={`${fieldClasses} py-2 file:mr-3 file:rounded file:border-0 file:bg-zinc-100 file:px-3 file:py-1 file:font-semibold`}
-            type="file"
-            accept="image/png,.png"
-            onChange={handleImageChange}
-            required
-          />
-        </label>
+        <div className="flex flex-[2] flex-col gap-2 text-sm font-semibold text-zinc-700">
+          <span id="reward-image-label">Image (transparent PNG)</span>
+          <label className={`${fieldClasses} flex cursor-pointer items-center gap-2 py-1`}>
+            <input
+              ref={fileInputRef}
+              className="peer sr-only"
+              type="file"
+              accept="image/png,.png"
+              aria-labelledby="reward-image-label"
+              onChange={handleImageChange}
+              required
+            />
+            <span className="shrink-0 rounded bg-zinc-100 px-3 py-1 font-semibold peer-focus-visible:ring-2 peer-focus-visible:ring-zinc-400">
+              Choose file
+            </span>
+            <span className="min-w-0 truncate font-normal">
+              {imageFileName || "No file chosen"}
+            </span>
+          </label>
+        </div>
 
         <button
           className="h-11 rounded-md bg-zinc-800 px-5 font-semibold text-white transition hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50"
@@ -115,7 +130,7 @@ export function RewardSettings({
           onClick={handleAddReward}
           disabled={!requiredCurrency || !imageDataUrl}
         >
-          追加
+          Add
         </button>
       </div>
 
@@ -126,7 +141,7 @@ export function RewardSettings({
       )}
 
       {rewards.length > 0 && (
-        <ul className="mt-4 grid grid-cols-2 gap-3" aria-label="登録済みrewards">
+        <ul className="mt-4 grid grid-cols-2 gap-3" aria-label="Added rewards">
           {rewards.map((reward) => (
             <li
               key={reward.id}
@@ -151,9 +166,9 @@ export function RewardSettings({
                 onClick={() =>
                   onRewardsChange(rewards.filter((item) => item.id !== reward.id))
                 }
-                aria-label={`必要通貨 ${reward.requiredCurrency} のrewardを削除`}
+                aria-label={`Remove reward requiring ${reward.requiredCurrency} currency`}
               >
-                削除
+                Remove
               </button>
             </li>
           ))}
